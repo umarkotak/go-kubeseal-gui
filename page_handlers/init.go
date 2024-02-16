@@ -1,4 +1,4 @@
-package handlers
+package page_handlers
 
 import "text/template"
 

@@ -1,4 +1,4 @@
-package handlers
+package page_handlers
 
 import (
 	"net/http"
@@ -6,7 +6,7 @@ import (
 	"github.com/umarkotak/go-kubeseal-gui/templates"
 )
 
-func (h *handlers) PageHome(w http.ResponseWriter, r *http.Request) {
+func (h *handlers) Home(w http.ResponseWriter, r *http.Request) {
 	// tmpl := h.templateMap["home.html"]
 	tmpl, _ := templates.Get("home.html", "base.html")
 
