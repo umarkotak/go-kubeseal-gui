@@ -1,0 +1,85 @@
+{{ define "base" }}
+
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Go Kubeseal GUI</title>
+
+  <script
+    src="https://unpkg.com/htmx.org@1.9.10"
+    integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css"
+    rel="stylesheet"
+    type="text/css"
+  />
+  <script
+    src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+    crossorigin="anonymous"
+  ></script>
+</head>
+<body>
+  <div class="navbar bg-base-200 sticky top-0 z-50">
+    <div class="flex-none">
+      <button class="btn btn-square btn-ghost">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      </button>
+    </div>
+    <div class="flex-1">
+      <a class="btn btn-ghost text-xl">Go Kubeseal GUI</a>
+    </div>
+    <div class="flex-none">
+      <button class="btn btn-square btn-ghost">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="flex">
+    <div class="">
+      <ul id="sidebar" class="menu w-56 sticky top-16">
+        <li class="bg-base-200 rounded-lg">
+          <a href="/home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+            Home
+          </a>
+        </li>
+        <li class="bg-base-200 rounded-lg">
+          <a href="/about">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            About
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="w-full mr-2 mt-2">
+      <div class="menu bg-base-200 w-56 w-full rounded-box min-h-screen mb-2">
+        {{template "content" .}}
+      </div>
+    </div>
+  </div>
+</body>
+
+<script>
+</script>
+
+<script>
+  var _urlpath = $(location).attr('pathname');
+
+  $('#sidebar > li').each(function(){
+    var _this = $(this);
+    var _str = _this.find('a').attr('href');
+    _str !== _urlpath ? _this.removeClass('bg-base-200', 'rounded-lg') : _this.addClass('bg-base-200', 'rounded-lg');
+  });
+</script>
+
+</html>
+
+{{ end }}
