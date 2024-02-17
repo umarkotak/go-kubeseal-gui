@@ -7,6 +7,12 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+var ()
+
+func Initialize() {
+
+}
+
 func Get(fileNames ...string) (*template.Template, error) {
 	fileFullName := []string{}
 	for _, fileName := range fileNames {
