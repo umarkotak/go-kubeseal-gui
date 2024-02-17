@@ -50,9 +50,41 @@ func (h *handlers) AddClustersConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Add("HX-Refresh", "true")
+	// successTmpl.ExecuteTemplate(w, "notification", map[string]interface{}{
+	// 	"Message": "success add cluster!",
+	// })
+}
+
+func (h *handlers) RemoveClustersConfig(w http.ResponseWriter, r *http.Request) {
+	err := config.RemoveCluster(r.PathValue("alias"))
+	if err != nil {
+		failureTmpl.ExecuteTemplate(w, "notification", map[string]interface{}{
+			"Error":   err.Error(),
+			"Message": "remove cluster config error",
+		})
+		return
+	}
+
 	successTmpl.ExecuteTemplate(w, "notification", map[string]interface{}{
-		"Message": "success add cluster!",
+		"Message": "success remove cluster config!",
 	})
+}
+
+func (h *handlers) ClusterEnableSecrets(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	secrets := r.Form["secrets"]
+
+	err := config.SetClusterSecret(r.PathValue("alias"), secrets)
+	if err != nil {
+		failureTmpl.ExecuteTemplate(w, "notification", map[string]interface{}{
+			"Error":   err.Error(),
+			"Message": "enable secrets error",
+		})
+		return
+	}
+
+	w.Header().Add("HX-Refresh", "true")
 }
 
 func (h *handlers) SetupConfigController(w http.ResponseWriter, r *http.Request) {
@@ -63,7 +95,7 @@ func (h *handlers) SetupConfigController(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		failureTmpl.ExecuteTemplate(w, "notification", map[string]interface{}{
 			"Error":   err.Error(),
-			"Message": "save controller config",
+			"Message": "save controller config error",
 		})
 		return
 	}

@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -51,21 +52,44 @@ func Load() error {
 
 // Set config variable to file
 func SetCluster(c Cluster) error {
+	for _, oneCluster := range config.ClusterMap {
+		if oneCluster.Name == c.Name {
+			err := fmt.Errorf("cluster already exists")
+			return err
+		}
+	}
+
 	config.ClusterMap[c.Alias] = c
 
-	file, err := os.Create("config.json")
+	err := saveToFile(config)
 	if err != nil {
 		logrus.Error(err)
-		return err
+		return nil
 	}
-	defer file.Close()
 
-	b, _ := json.Marshal(config)
+	Load()
 
-	_, err = file.Write(b)
+	return nil
+}
+
+func SetClusterSecret(alias string, secrets []string) error {
+	registeredSecrets := []Secret{}
+	for _, oneSecret := range secrets {
+		registeredSecrets = append(registeredSecrets, Secret{
+			Name: oneSecret,
+		})
+	}
+
+	cluster := config.ClusterMap[alias]
+
+	cluster.RegisteredSecrets = registeredSecrets
+
+	config.ClusterMap[alias] = cluster
+
+	err := saveToFile(config)
 	if err != nil {
 		logrus.Error(err)
-		return err
+		return nil
 	}
 
 	Load()
@@ -77,6 +101,28 @@ func SetController(ctrlrName, ctrlrNamespace string) error {
 	config.ControllerName = ctrlrName
 	config.ControllerNamespace = ctrlrNamespace
 
+	saveToFile(config)
+
+	Load()
+
+	return nil
+}
+
+func RemoveCluster(alias string) error {
+	delete(config.ClusterMap, alias)
+
+	err := saveToFile(config)
+	if err != nil {
+		logrus.Error(err)
+		return nil
+	}
+
+	Load()
+
+	return nil
+}
+
+func saveToFile(c Config) error {
 	file, err := os.Create("config.json")
 	if err != nil {
 		logrus.Error(err)
@@ -84,15 +130,13 @@ func SetController(ctrlrName, ctrlrNamespace string) error {
 	}
 	defer file.Close()
 
-	b, _ := json.Marshal(config)
+	b, _ := json.Marshal(c)
 
 	_, err = file.Write(b)
 	if err != nil {
 		logrus.Error(err)
 		return err
 	}
-
-	Load()
 
 	return nil
 }

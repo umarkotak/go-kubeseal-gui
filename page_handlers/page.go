@@ -25,13 +25,20 @@ func (h *handlers) Config(w http.ResponseWriter, r *http.Request) {
 
 	tmpl, _ := templates.Get("config.html", "base.html")
 
+	addedClusters := []config.Cluster{}
+	for _, oneCluster := range config.Get().ClusterMap {
+		addedClusters = append(addedClusters, oneCluster)
+	}
+
 	tmpl.ExecuteTemplate(w, "base", struct {
 		Clusters            []string
 		ControllerName      string
 		ControllerNamespace string
+		AddedClusters       []config.Cluster
 	}{
 		ControllerName:      config.Get().ControllerName,
 		ControllerNamespace: config.Get().ControllerNamespace,
 		Clusters:            clusters,
+		AddedClusters:       addedClusters,
 	})
 }

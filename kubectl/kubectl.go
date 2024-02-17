@@ -61,7 +61,7 @@ func GetSecretsName(ctx context.Context) ([]config.Secret, error) {
 		}
 
 		filteredSecretNames = append(filteredSecretNames, config.Secret{
-			Name: name,
+			Name: strings.ReplaceAll(name, "secret/", ""),
 		})
 	}
 
