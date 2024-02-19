@@ -133,7 +133,6 @@
             <div class="mb-2">Cluster <span class="text-xs text-red-500">*</span></div>
             <div class="w-full mb-2">
               <select id="cluster-select" name="cluster-select" class="w-full p-2 border rounded-lg h-10">
-                <option value="undefined">Select Cluster</option>
                 {{range .Clusters}}
                   <option value="{{.}}">{{.}}</option>
                 {{end}}
@@ -162,7 +161,10 @@
 
 <script>
   $(document).ready(function() {
-    $('#cluster-select').select2()
+    $('#cluster-select').select2({
+      placeholder: "Select Secret",
+    })
+    $("#cluster-select").val('').change()
   })
 </script>
 

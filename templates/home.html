@@ -1,7 +1,220 @@
 {{ define "content" }}
 
-<div>
-  <h1>HELLOOO</h1>
+<div class="grid grid-cols-7 gap-2">
+  <div class="flex flex-col col-span-5">
+    <span class="bg-base-200 px-2 py-1.5 rounded-lg text-md">Secrets</span>
+    <div class=" p-2">
+      <div id="cluster-list">
+        <div class="flex justify-center items-center join mb-2">
+          <div class="tooltip" data-tip="value on editor will be sealed upon submit">
+            <input class="join-item btn btn-sm" type="radio" name="active_tab" aria-label="Editor" value="btc_sec_editor" checked="checked" />
+          </div>
+          <div class="tooltip" data-tip="show diff between existing secret and the new secret">
+            <input class="join-item btn btn-sm" type="radio" name="active_tab" aria-label="Diff" value="btc_sec_diff" />
+          </div>
+          <div class="tooltip" data-tip="a sealed secret result from the editor value">
+            <input class="join-item btn btn-sm" type="radio" name="active_tab" aria-label="Result" value="btc_sec_result" />
+          </div>
+          <div class="tooltip" data-tip="a sealed secret diff result from the editor value">
+            <input class="join-item btn btn-sm" type="radio" name="active_tab" aria-label="Result Diff" value="btc_sec_result_diff" />
+          </div>
+          <div class="tooltip" data-tip="selaed secret with common name to be used on historical log">
+            <input class="join-item btn btn-sm" type="radio" name="active_tab" aria-label="Preview" value="btc_sec_preview" />
+          </div>
+          <div class="tooltip" data-tip="selaed secret of diff with common name to be used on historical log">
+            <input class="join-item btn btn-sm" type="radio" name="active_tab" aria-label="Preview Diff" value="btc_sec_preview_diff" />
+          </div>
+        </div>
+
+        <div class="rounded-lg overflow-hidden border shadow-md">
+          <div id="ace_seal_raw" class="w-full"></div>
+          <div id="ace_diff" class="w-full hidden">
+            <table id="dataTable" class="table w-full">
+              <thead class="">
+                <tr class="">
+                  <th class="p-1">Key</th>
+                  <th class="p-1">Old Value</th>
+                  <th class="p-1">New Value</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+          <div id="ace_seal_sealed" class="w-full hidden">ace_seal_sealed</div>
+          <div id="ace_seal_diff_sealed" class="w-full hidden">ace_seal_diff_sealed</div>
+          <div id="ace_seal_preview_sealed" class="w-full hidden">ace_seal_preview_sealed</div>
+          <div id="ace_seal_preview_diff_sealed" class="w-full hidden">ace_seal_preview_diff_sealed</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flex flex-col col-span-2" style="margin-top: -8px">
+    <div class="flex flex-col sticky top-16 pt-2">
+      <span class="bg-base-200 px-2 py-1.5 rounded-lg text-md">Action</span>
+      <div class="p-2 mb-3">
+        <div class="mb-2">Cluster <span class="text-xs text-red-500">*</span></div>
+        <div class="w-full mb-2">
+          <select id="cluster-select" name="cluster-select" class="w-full p-2 border rounded-lg h-10">
+            {{range .Clusters}}
+              <option value="{{.}}">{{.}}</option>
+            {{end}}
+          </select>
+        </div>
+        <div class="mb-2 mb-2">Secrets</div>
+        <div class="w-full mb-2">
+          <select id="secret-select" name="cluster-select" class="w-full p-2 border rounded-lg h-10">
+          </select>
+        </div>
+        <div class="flex justify-end mb-2">
+          <button class="btn btn-sm bg-white">
+            <svg class="h-4 w-4">
+              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+            </svg>
+            Read Secret
+          </button>
+        </div>
+        <div class="mb-2">Secret Name <span class="text-xs text-red-500">*</span></div>
+        <div class="mb-2">
+          <input
+            type="text"
+            id="input_secret_name"
+            name="input_secret_name"
+            class="w-full p-2 border rounded-lg h-10"
+            placeholder="backend-app"
+            value=""
+          />
+        </div>
+        <div class="flex justify-end">
+          <button class="btn btn-sm bg-white">
+            <svg class="h-4 w-4">
+              <path d="M5.338 1.59a61 61 0 0 0-2.837.856.48.48 0 0 0-.328.39c-.554 4.157.726 7.19 2.253 9.188a10.7 10.7 0 0 0 2.287 2.233c.346.244.652.42.893.533q.18.085.293.118a1 1 0 0 0 .101.025 1 1 0 0 0 .1-.025q.114-.034.294-.118c.24-.113.547-.29.893-.533a10.7 10.7 0 0 0 2.287-2.233c1.527-1.997 2.807-5.031 2.253-9.188a.48.48 0 0 0-.328-.39c-.651-.213-1.75-.56-2.837-.855C9.552 1.29 8.531 1.067 8 1.067c-.53 0-1.552.223-2.662.524zM5.072.56C6.157.265 7.31 0 8 0s1.843.265 2.928.56c1.11.3 2.229.655 2.887.87a1.54 1.54 0 0 1 1.044 1.262c.596 4.477-.787 7.795-2.465 9.99a11.8 11.8 0 0 1-2.517 2.453 7 7 0 0 1-1.048.625c-.28.132-.581.24-.829.24s-.548-.108-.829-.24a7 7 0 0 1-1.048-.625 11.8 11.8 0 0 1-2.517-2.453C1.928 10.487.545 7.169 1.141 2.692A1.54 1.54 0 0 1 2.185 1.43 63 63 0 0 1 5.072.56"/>
+              <path d="M9.5 6.5a1.5 1.5 0 0 1-1 1.415l.385 1.99a.5.5 0 0 1-.491.595h-.788a.5.5 0 0 1-.49-.595l.384-1.99a1.5 1.5 0 1 1 2-1.415"/>
+            </svg>
+            Seal
+          </button>
+        </div>
+      </div>
+
+      <div class="flex justify-between items-center bg-base-200 p-2 rounded-lg text-md w-full">
+        <span>Git Integration</span>
+
+        <div class="tooltip tooltip-left" data-tip="TBA">
+          <button class="btn btn-xs">
+            i
+          </button>
+        </div>
+      </div>
+      <div class="p-2">
+      </div>
+    </div>
+  </div>
+
+  <!-- REF: https://github.com/ajaxorg/ace -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+  <script>
+
+  </script>
+  <script>
+    var ace_seal_raw = ace.edit("ace_seal_raw")
+    ace_set_default(ace_seal_raw)
+
+    var ace_seal_sealed = ace.edit("ace_seal_sealed")
+    ace_set_default(ace_seal_sealed)
+
+    var ace_seal_diff_sealed = ace.edit("ace_seal_diff_sealed")
+    ace_set_default(ace_seal_diff_sealed)
+
+    var ace_seal_preview_sealed = ace.edit("ace_seal_preview_sealed")
+    ace_set_default(ace_seal_preview_sealed)
+
+    var ace_seal_preview_diff_sealed = ace.edit("ace_seal_preview_diff_sealed")
+    ace_set_default(ace_seal_preview_diff_sealed)
+
+    function ace_set_default(ace_editor) {
+      ace_editor.setOptions({
+        maxLines: Infinity
+      })
+      ace_editor.getSession().setMode("ace/mode/yaml")
+      ace_editor.getSession().setTabSize(2)
+      ace_editor.getSession().setUseSoftTabs(true)
+      ace_editor.getSession().setUseWrapMode(true)
+      ace_editor.setTheme("ace/theme/textmate")
+      ace_editor.setValue(`apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: app-name-here
+  namespace: default
+spec:
+  encryptedData:
+    KEY-1: VALUE-1
+    KEY-2: VALUE-2
+`, -1)
+    }
+
+    $('input[name="active_tab"]').on('click change', function(e) {
+      var active_tab = e.currentTarget.getAttribute("value")
+      toggle_ace_section(active_tab)
+    });
+
+    function toggle_ace_section(activeID) {
+      $("#ace_seal_raw").addClass("hidden")
+      $("#ace_diff").addClass("hidden")
+      $("#ace_seal_sealed").addClass("hidden")
+      $("#ace_seal_diff_sealed").addClass("hidden")
+      $("#ace_seal_preview_sealed").addClass("hidden")
+      $("#ace_seal_preview_diff_sealed").addClass("hidden")
+
+      var btn_to_tab_map = {
+        "btc_sec_editor": "ace_seal_raw",
+        "btc_sec_diff": "ace_diff",
+        "btc_sec_result": "ace_seal_sealed",
+        "btc_sec_result_diff": "ace_seal_diff_sealed",
+        "btc_sec_preview": "ace_seal_preview_sealed",
+        "btc_sec_preview_diff": "ace_seal_preview_diff_sealed",
+      }
+
+      $(`#${btn_to_tab_map[activeID]}`).removeClass("hidden")
+    }
+  </script>
+  <script>
+    $(document).ready(function() {
+      $('#cluster-select').select2({
+        placeholder: "Select Cluster",
+      })
+      $("#cluster-select").val('').change()
+
+      $('#secret-select').select2({
+        placeholder: "Select Secret",
+      })
+    })
+  </script>
+  <script>
+    $(document).ready(function() {
+      var clusterSecretMap = '{{ .ClusterSecretMap }}'
+      var clusterSecretMapObj = JSON.parse(clusterSecretMap)
+
+      $('#cluster-select').on('select2:select', function (e) {
+        var data = e.params.data
+
+        var secrets = clusterSecretMapObj[data.id]
+
+        $('#secret-select').select2('data', null)
+        secrets.forEach(oneSecret => {
+          var newOption = new Option(oneSecret, oneSecret, true, true)
+          $('#secret-select').append(newOption)
+        })
+        $("#secret-select").val('').change()
+      })
+
+      $('#secret-select').on('select2:select', function (e) {
+        var data = e.params.data
+
+        $('#input_secret_name').val(data.id)
+      })
+    })
+  </script>
 </div>
 
 {{ end }}
