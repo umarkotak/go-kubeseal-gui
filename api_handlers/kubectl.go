@@ -11,6 +11,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/go-kubeseal-gui/config"
+	"github.com/umarkotak/go-kubeseal-gui/helper"
 	"github.com/umarkotak/go-kubeseal-gui/kubectl"
 	"github.com/umarkotak/go-kubeseal-gui/utils/render"
 	"gopkg.in/yaml.v2"
@@ -129,6 +130,12 @@ func (h *handlers) KubectlSeal(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err = kubectl.UseContext(r.Context(), clusterName)
+	if err != nil {
+		render.Error(w, 400, err, "kubectl use context error")
+		return
+	}
+
 	cmd := exec.Command(
 		"kubeseal",
 		fmt.Sprintf("--controller-name=%s", config.Get().ControllerName),
@@ -180,4 +187,63 @@ func (h *handlers) KubectlSeal(w http.ResponseWriter, r *http.Request) {
 	}
 
 	render.ResponseRaw(w, secretSealedYaml)
+}
+
+func (h *handlers) KubectlSecretDiff(w http.ResponseWriter, r *http.Request) {
+	aliasName := r.PathValue("alias_name")
+	clusterName := config.Get().ClusterMap[aliasName].Name
+
+	if clusterName == "" {
+		err := fmt.Errorf("bad request")
+		render.Error(w, 400, err, "missing cluster name or secret name")
+		return
+	}
+
+	err := kubectl.UseContext(r.Context(), clusterName)
+	if err != nil {
+		render.Error(w, 400, err, "kubectl use context error")
+		return
+	}
+
+	bodyByte, err := io.ReadAll(r.Body)
+	if err != nil {
+		logrus.WithContext(r.Context()).Error(err)
+		render.Error(w, 500, err, "")
+		return
+	}
+
+	params := SealParams{}
+
+	err = json.Unmarshal(bodyByte, &params)
+	if err != nil {
+		logrus.WithContext(r.Context()).Error(err)
+		render.Error(w, 400, err, "")
+		return
+	}
+
+	var kubectlSecret kubectl.Secret
+	err = yaml.Unmarshal([]byte(params.YamlValue), &kubectlSecret)
+	if err != nil {
+		logrus.WithContext(r.Context()).Error(err)
+		render.Error(w, 500, err, "")
+		return
+	}
+
+	if kubectlSecret.Metadata.Name == "" {
+		kubectlSecret.Metadata.Name = params.SecretName
+	}
+
+	oldKubectlSecret, err := kubectl.GetSecretYaml(r.Context(), kubectlSecret.Metadata.Name)
+	if err != nil {
+		logrus.WithContext(r.Context()).Error(err)
+	}
+
+	err = oldKubectlSecret.DecodeBase64()
+	if err != nil {
+		logrus.WithContext(r.Context()).Error(err)
+	}
+
+	diffResult := helper.DiffMaps(oldKubectlSecret.Data, kubectlSecret.Data)
+
+	render.Response(w, diffResult)
 }

@@ -33,6 +33,7 @@ func main() {
 	mux.HandleFunc("GET /api/kubectl/get_contexts", ah.GetKubectlContexts)
 	mux.HandleFunc("GET /api/kubectl/{alias_name}/secret/{secret_name}/read", ah.KubectlSecretRead)
 	mux.HandleFunc("POST /api/kubectl/{alias_name}/secret/seal", ah.KubectlSeal)
+	mux.HandleFunc("POST /api/kubectl/{alias_name}/secret/compare_diff", ah.KubectlSecretDiff)
 
 	// Page handler
 	mux.HandleFunc("GET /home", ph.Home)
