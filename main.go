@@ -32,6 +32,7 @@ func main() {
 	mux.HandleFunc("POST /api/config/controller", ah.SetupConfigController)
 	mux.HandleFunc("GET /api/kubectl/get_contexts", ah.GetKubectlContexts)
 	mux.HandleFunc("GET /api/kubectl/{alias_name}/secret/{secret_name}/read", ah.KubectlSecretRead)
+	mux.HandleFunc("POST /api/kubectl/{alias_name}/secret/seal", ah.KubectlSeal)
 
 	// Page handler
 	mux.HandleFunc("GET /home", ph.Home)
@@ -39,6 +40,9 @@ func main() {
 	mux.HandleFunc("GET /config", ph.Config)
 
 	port := ":16000"
+
+	logrus.Infof("Open dashboard: http://localhost%s/home", port)
+
 	logrus.Infof("Listening on port %s", port)
 	logrus.Fatal(http.ListenAndServe(port, mux))
 }

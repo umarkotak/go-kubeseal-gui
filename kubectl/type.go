@@ -27,3 +27,10 @@ func (s *Secret) DecodeBase64() error {
 	}
 	return nil
 }
+
+func (s *Secret) EncodeBase64() {
+	for k, v := range s.Data {
+		b64Decoded := base64.StdEncoding.EncodeToString([]byte(v))
+		s.Data[k] = string(b64Decoded)
+	}
+}

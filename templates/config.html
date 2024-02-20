@@ -1,7 +1,7 @@
 {{ define "content" }}
 
-<div class="grid grid-cols-7 gap-2">
-  <div class="flex flex-col col-span-5">
+<div class="grid grid-cols-12 gap-2">
+  <div class="flex flex-col col-span-9">
     <span class="bg-base-200 px-2 py-1.5 rounded-lg text-md">Clusters</span>
     <div class="mt-2 p-2">
       <div id="cluster-list">
@@ -86,8 +86,8 @@
       </div>
     </div>
   </div>
-  <div class="flex flex-col col-span-2" style="margin-top: -8px">
-    <div class="flex flex-col sticky top-16 pt-2">
+  <div class="flex flex-col col-span-3" style="margin-top: -8px">
+    <div class="flex flex-col sticky top-0 pt-2">
       <span class="bg-base-200 px-2 py-1.5 rounded-lg text-md">Setup Config</span>
       <div class="p-2 mb-3">
         <form hx-post="/api/config/controller" hx-target="#controller-update-response" hx-swap="innerHtml">
