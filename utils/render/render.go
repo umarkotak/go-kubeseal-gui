@@ -5,6 +5,13 @@ import (
 	"net/http"
 )
 
+func ResponseRaw(w http.ResponseWriter, data []byte) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	w.Write(data)
+}
+
 func Response(w http.ResponseWriter, data interface{}) {
 	payload := map[string]interface{}{
 		"data": data,

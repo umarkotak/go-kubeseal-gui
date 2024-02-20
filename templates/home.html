@@ -3,30 +3,32 @@
 <div class="grid grid-cols-7 gap-2">
   <div class="flex flex-col col-span-5">
     <span class="bg-base-200 px-2 py-1.5 rounded-lg text-md">Secrets</span>
-    <div class=" p-2">
+    <div class="p-2 pt-0">
       <div id="cluster-list">
-        <div class="flex justify-center items-center join mb-2">
-          <div class="tooltip" data-tip="value on editor will be sealed upon submit">
-            <input class="join-item btn btn-sm" type="radio" name="active_tab" aria-label="Editor" value="btc_sec_editor" checked="checked" />
-          </div>
-          <div class="tooltip" data-tip="show diff between existing secret and the new secret">
-            <input class="join-item btn btn-sm" type="radio" name="active_tab" aria-label="Diff" value="btc_sec_diff" />
-          </div>
-          <div class="tooltip" data-tip="a sealed secret result from the editor value">
-            <input class="join-item btn btn-sm" type="radio" name="active_tab" aria-label="Result" value="btc_sec_result" />
-          </div>
-          <div class="tooltip" data-tip="a sealed secret diff result from the editor value">
-            <input class="join-item btn btn-sm" type="radio" name="active_tab" aria-label="Result Diff" value="btc_sec_result_diff" />
-          </div>
-          <div class="tooltip" data-tip="selaed secret with common name to be used on historical log">
-            <input class="join-item btn btn-sm" type="radio" name="active_tab" aria-label="Preview" value="btc_sec_preview" />
-          </div>
-          <div class="tooltip" data-tip="selaed secret of diff with common name to be used on historical log">
-            <input class="join-item btn btn-sm" type="radio" name="active_tab" aria-label="Preview Diff" value="btc_sec_preview_diff" />
+        <div class="w-full flex justify-center mb-2 sticky top-16 z-40 pt-2">
+          <div class="join shadow-md">
+            <div class="tooltip" data-tip="value on editor will be sealed upon submit">
+              <input class="join-item btn btn-sm" type="radio" name="active_tab" aria-label="Editor" value="btc_sec_editor" checked="checked" />
+            </div>
+            <div class="tooltip" data-tip="show diff between existing secret and the new secret">
+              <input class="join-item btn btn-sm" type="radio" name="active_tab" aria-label="Diff" value="btc_sec_diff" />
+            </div>
+            <div class="tooltip" data-tip="a sealed secret result from the editor value">
+              <input class="join-item btn btn-sm" type="radio" name="active_tab" aria-label="Result" value="btc_sec_result" />
+            </div>
+            <div class="tooltip" data-tip="a sealed secret diff result from the editor value">
+              <input class="join-item btn btn-sm" type="radio" name="active_tab" aria-label="Result Diff" value="btc_sec_result_diff" />
+            </div>
+            <div class="tooltip" data-tip="selaed secret with common name to be used on historical log">
+              <input class="join-item btn btn-sm" type="radio" name="active_tab" aria-label="Preview" value="btc_sec_preview" />
+            </div>
+            <div class="tooltip" data-tip="selaed secret of diff with common name to be used on historical log">
+              <input class="join-item btn btn-sm" type="radio" name="active_tab" aria-label="Preview Diff" value="btc_sec_preview_diff" />
+            </div>
           </div>
         </div>
 
-        <div class="rounded-lg overflow-hidden border shadow-md">
+        <div class="rounded-lg overflow-hidden border shadow-md mb-8">
           <div id="ace_seal_raw" class="w-full"></div>
           <div id="ace_diff" class="w-full hidden">
             <table id="dataTable" class="table w-full">
@@ -67,7 +69,7 @@
           </select>
         </div>
         <div class="flex justify-end mb-2">
-          <button class="btn btn-sm bg-white">
+          <button class="btn btn-sm bg-white" onclick="readSecret()">
             <svg class="h-4 w-4">
               <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
             </svg>
@@ -113,7 +115,34 @@
   <!-- REF: https://github.com/ajaxorg/ace -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
   <script>
+    async function readSecret() {
+      if (!$('#cluster-select').val()) {
+        alert("Please select cluster first")
+        return
+      }
 
+      if (!$('#secret-select').val()) {
+        alert("Please select secret first")
+        return
+      }
+
+      try {
+        const response = await fetch(
+          `/api/kubectl/${$('#cluster-select').val()}/secret/${$('#secret-select').val()}/read`,
+          { method: 'GET' }
+        )
+
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} - ${response.statusText}`)
+        }
+
+        const data = await response.text()
+        ace_seal_raw.setValue(data, -1)
+
+      } catch (error) {
+        alert(`ERROR: ${error.message}`)
+      }
+    }
   </script>
   <script>
     var ace_seal_raw = ace.edit("ace_seal_raw")
@@ -156,7 +185,7 @@ spec:
     $('input[name="active_tab"]').on('click change', function(e) {
       var active_tab = e.currentTarget.getAttribute("value")
       toggle_ace_section(active_tab)
-    });
+    })
 
     function toggle_ace_section(activeID) {
       $("#ace_seal_raw").addClass("hidden")

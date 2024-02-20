@@ -31,6 +31,7 @@ func main() {
 	mux.HandleFunc("POST /api/config/clusters/{alias}/enable_secrets", ah.ClusterEnableSecrets)
 	mux.HandleFunc("POST /api/config/controller", ah.SetupConfigController)
 	mux.HandleFunc("GET /api/kubectl/get_contexts", ah.GetKubectlContexts)
+	mux.HandleFunc("GET /api/kubectl/{alias_name}/secret/{secret_name}/read", ah.KubectlSecretRead)
 
 	// Page handler
 	mux.HandleFunc("GET /home", ph.Home)

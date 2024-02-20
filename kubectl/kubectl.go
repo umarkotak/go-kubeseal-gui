@@ -9,6 +9,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/umarkotak/go-kubeseal-gui/config"
+	"gopkg.in/yaml.v2"
 )
 
 func GetContexts(ctx context.Context) ([]string, error) {
@@ -84,4 +85,27 @@ func UseContext(ctx context.Context, name string) error {
 	}
 
 	return nil
+}
+
+func GetSecretYaml(ctx context.Context, secretName string) (Secret, error) {
+	kubeCmd := exec.Command("kubectl", "get", "secret", secretName, "-o", "yaml")
+
+	var stderr bytes.Buffer
+	kubeCmd.Stderr = &stderr
+
+	output, err := kubeCmd.Output()
+	if err != nil {
+		err := fmt.Errorf(fmt.Sprint(err) + ": " + stderr.String())
+		return Secret{}, err
+	}
+
+	secret := Secret{}
+
+	err = yaml.Unmarshal(output, &secret)
+	if err != nil {
+		logrus.WithContext(ctx).Error(err)
+		return Secret{}, err
+	}
+
+	return secret, nil
 }
