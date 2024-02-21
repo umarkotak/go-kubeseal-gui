@@ -38,9 +38,7 @@ func GetContexts(ctx context.Context) ([]string, error) {
 }
 
 func GetSecretsName(ctx context.Context) ([]config.Secret, error) {
-	secretNames := []string{}
-
-	cmd := exec.Command("kubectl", "get", "secrets", "-o", "name")
+	cmd := exec.Command("kubectl", "get", "secret")
 
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
@@ -52,21 +50,49 @@ func GetSecretsName(ctx context.Context) ([]config.Secret, error) {
 		return []config.Secret{}, err
 	}
 
-	secretNames = strings.Split(string(output), "\n")
-
 	filteredSecretNames := []config.Secret{}
 
-	for _, name := range secretNames {
-		if name == "" {
-			continue
+	lines := strings.Split(string(output), "\n")
+	for _, line := range lines {
+		if strings.Contains(line, "Opaque") {
+			fields := strings.Fields(line)
+			if len(fields) > 0 {
+				filteredSecretNames = append(filteredSecretNames, config.Secret{
+					Name: fields[0],
+				})
+			}
 		}
-
-		filteredSecretNames = append(filteredSecretNames, config.Secret{
-			Name: strings.ReplaceAll(name, "secret/", ""),
-		})
 	}
 
 	return filteredSecretNames, nil
+}
+
+func GetSecretsNameString(ctx context.Context) ([]string, error) {
+	cmd := exec.Command("kubectl", "get", "secret")
+
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+
+	output, err := cmd.Output()
+	if err != nil {
+		err = fmt.Errorf("%s - %s", err.Error(), stderr.String())
+		logrus.WithContext(ctx).Error(err)
+		return []string{}, err
+	}
+
+	secrets := []string{}
+
+	lines := strings.Split(string(output), "\n")
+	for _, line := range lines {
+		if strings.Contains(line, "Opaque") {
+			fields := strings.Fields(line)
+			if len(fields) > 0 {
+				secrets = append(secrets, fields[0])
+			}
+		}
+	}
+
+	return secrets, nil
 }
 
 func UseContext(ctx context.Context, name string) error {

@@ -13,6 +13,7 @@ type (
 		ControllerName      string             `json:"controller_name"`
 		ControllerNamespace string             `json:"controller_namespace"`
 		ClusterMap          map[string]Cluster `json:"cluster_map"`
+		GitConf             GitConf            `json:"git_conf"`
 	}
 
 	Cluster struct {
@@ -20,6 +21,15 @@ type (
 		Name              string   `json:"name"`               // the cluster name
 		RegisteredSecrets []Secret `json:"registered_secrets"` // selected secrets that will be shown on ui
 		AllSecrets        []Secret `json:"all_secrets"`        // set upon saving cluster, you need to re add if you want to sync the secrets
+	}
+
+	GitConf struct {
+		GitProvider       string `json:"git_provider"`        // Enum: gitlab
+		GitlabAccessToken string `json:"gitlab_access_token"` // gitlab access token: https://your-gitlab-host/-/profile/personal_access_tokens
+		PrivateKeyPath    string `json:"private_key_path"`    // used to push git changes to repository
+		TmpFolderPath     string `json:"tmp_folder_path"`     // temporary path to store the clonned repository
+		RepoUrl           string `json:"repo_url"`            // repo in which will be pushed the env
+		RepoHttpUrl       string `json:"repo_http_url"`
 	}
 
 	Secret struct {
@@ -108,6 +118,16 @@ func SetController(ctrlrName, ctrlrNamespace string) error {
 	return nil
 }
 
+func SetGitIntConf(conf GitConf) error {
+	config.GitConf = conf
+
+	saveToFile(config)
+
+	Load()
+
+	return nil
+}
+
 func RemoveCluster(alias string) error {
 	delete(config.ClusterMap, alias)
 
@@ -130,7 +150,7 @@ func saveToFile(c Config) error {
 	}
 	defer file.Close()
 
-	b, _ := json.Marshal(c)
+	b, _ := json.MarshalIndent(c, "", "  ")
 
 	_, err = file.Write(b)
 	if err != nil {

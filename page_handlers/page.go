@@ -57,10 +57,12 @@ func (h *handlers) Config(w http.ResponseWriter, r *http.Request) {
 		AddedClusters       []config.Cluster
 		ControllerName      string
 		ControllerNamespace string
+		GitConf             config.GitConf
 	}{
 		Clusters:            clusters,
 		AddedClusters:       addedClusters,
 		ControllerName:      config.Get().ControllerName,
 		ControllerNamespace: config.Get().ControllerNamespace,
+		GitConf:             config.Get().GitConf,
 	})
 }
