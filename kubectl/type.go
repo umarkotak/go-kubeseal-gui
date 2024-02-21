@@ -12,6 +12,28 @@ type (
 		Data       map[string]string `yaml:"data"`
 	}
 
+	SecretSealed struct {
+		APIVersion string               `yaml:"apiVersion"`
+		Kind       string               `yaml:"kind"`
+		Metadata   SecretSealedMetadata `yaml:"metadata"`
+		Spec       SecretSealedSpec     `yaml:"spec"`
+	}
+
+	SecretSealedMetadata struct {
+		CreationTimestamp interface{} `yaml:"creationTimestamp"`
+		Name              string      `yaml:"name"`
+		Namespace         string      `yaml:"namespace"`
+	}
+
+	SecretSealedSpec struct {
+		EncryptedData map[string]string    `yaml:"encryptedData"`
+		Template      SecretSealedTemplate `yaml:"template"`
+	}
+
+	SecretSealedTemplate struct {
+		Metadata SecretSealedMetadata `yaml:"metadata"`
+	}
+
 	Metadata struct {
 		Name string `yaml:"name"`
 	}

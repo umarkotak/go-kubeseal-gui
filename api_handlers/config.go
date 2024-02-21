@@ -104,3 +104,25 @@ func (h *handlers) SetupConfigController(w http.ResponseWriter, r *http.Request)
 		"Message": "success setup controller config!",
 	})
 }
+
+func (h *handlers) SetupGitIntegration(w http.ResponseWriter, r *http.Request) {
+	err := config.SetGitIntConf(config.GitConf{
+		GitProvider:       r.FormValue("git_conf_git_provider"),
+		GitlabAccessToken: r.FormValue("git_conf_gitlab_access_token"),
+		PrivateKeyPath:    r.FormValue("git_conf_private_key_path"),
+		TmpFolderPath:     r.FormValue("git_conf_tmp_folder_path"),
+		RepoUrl:           r.FormValue("git_conf_repo_url"),
+		RepoHttpUrl:       r.FormValue("git_conf_repo_http_url"),
+	})
+	if err != nil {
+		failureTmpl.ExecuteTemplate(w, "notification", map[string]interface{}{
+			"Error":   err.Error(),
+			"Message": "save git integration config error",
+		})
+		return
+	}
+
+	successTmpl.ExecuteTemplate(w, "notification", map[string]interface{}{
+		"Message": "success setup git integration config!",
+	})
+}

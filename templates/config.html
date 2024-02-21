@@ -69,7 +69,7 @@
 
                 $(`#secrets-select_${alias}`).select2({
                     placeholder: "Enable secrets",
-                    tags: true
+                    tags: true,
                 })
 
                 var activeSecrets = []
@@ -87,9 +87,9 @@
     </div>
   </div>
   <div class="flex flex-col col-span-3" style="margin-top: -8px">
-    <div class="flex flex-col sticky top-0 pt-2">
+    <div class="flex flex-col sticky top-0 pt-2 overflow-auto h-screen pb-16">
       <span class="bg-base-200 px-2 py-1.5 rounded-lg text-md">Setup Config</span>
-      <div class="p-2 mb-3">
+      <div class="p-2 mb-3 text-sm">
         <form hx-post="/api/config/controller" hx-target="#controller-update-response" hx-swap="innerHtml">
           <div class="mb-2">Controller Name <span class="text-xs text-red-500">*</span></div>
           <div class="mb-3">
@@ -127,7 +127,7 @@
       </div>
 
       <span class="bg-base-200 p-2 rounded-lg text-md">Register Cluster</span>
-      <div class="p-2">
+      <div class="p-2 mb-3 text-sm">
         <form hx-post="/api/config/clusters/add" hx-target="#cluster-add-response" hx-swap="innerHtml">
           <div class="">
             <div class="mb-2">Cluster <span class="text-xs text-red-500">*</span></div>
@@ -153,6 +153,96 @@
             </div>
           </div>
           <div id="cluster-add-response" class="mt-2"></div>
+        </form>
+      </div>
+
+      <!-- git_provider
+      gitlab_access_token
+      private_key_path
+      tmp_folder_path
+      repo_url
+      repo_http_url -->
+      <span class="bg-base-200 p-2 rounded-lg text-md">Git Integration Conf</span>
+      <div class="p-2 mb-3 text-sm">
+        <form hx-post="/api/config/git_integration" hx-target="#git-integration-config-response" hx-swap="innerHtml">
+          <div class="">
+            <div class="mb-2">Git Provider</div>
+            <div class="mb-3">
+              <input
+                type="text"
+                id="git_conf_git_provider"
+                name="git_conf_git_provider"
+                class="w-full p-2 border rounded-lg h-10"
+                placeholder="gitlab"
+                value="{{ .GitConf.GitProvider }}"
+              />
+            </div>
+            <div class="mb-2">Gitlab Access Token</div>
+            <div class="mb-3">
+              <input
+                type="text"
+                id="git_conf_gitlab_access_token"
+                name="git_conf_gitlab_access_token"
+                class="w-full p-2 border rounded-lg h-10"
+                placeholder="your-gitlab-access-token-here"
+                value="{{ .GitConf.GitlabAccessToken }}"
+              />
+            </div>
+            <div class="mb-2">Private Key Path</div>
+            <div class="mb-3">
+              <input
+                type="text"
+                id="git_conf_private_key_path"
+                name="git_conf_private_key_path"
+                class="w-full p-2 border rounded-lg h-10"
+                placeholder="/Users/jhonedoe/.ssh/id_rsa"
+                value="{{ .GitConf.PrivateKeyPath }}"
+              />
+            </div>
+            <div class="mb-2">Tmp Folder Path</div>
+            <div class="mb-3">
+              <input
+                type="text"
+                id="git_conf_tmp_folder_path"
+                name="git_conf_tmp_folder_path"
+                class="w-full p-2 border rounded-lg h-10"
+                placeholder="tmp/go-kube-seal-temp-git"
+                value="{{ .GitConf.TmpFolderPath }}"
+              />
+            </div>
+            <div class="mb-2">Repo URL</div>
+            <div class="mb-3">
+              <input
+                type="text"
+                id="git_conf_repo_url"
+                name="git_conf_repo_url"
+                class="w-full p-2 border rounded-lg h-10"
+                placeholder="git@github:user/env-repo.git"
+                value="{{ .GitConf.RepoUrl }}"
+              />
+            </div>
+            <div class="mb-2">Repo HTTP URL</div>
+            <div class="mb-3">
+              <input
+                type="text"
+                id="git_conf_repo_http_url"
+                name="git_conf_repo_http_url"
+                class="w-full p-2 border rounded-lg h-10"
+                placeholder="https://github.com/user/env-repo"
+                value="{{ .GitConf.RepoHttpUrl }}"
+              />
+            </div>
+            <div class="flex justify-end items-center">
+              <button class="btn btn-sm bg-white">
+                <svg class="h-4 w-4" class="bi bi-floppy">
+                  <path d="M11 2H9v3h2z"/>
+                  <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v4.5A1.5 1.5 0 0 1 11.5 7h-7A1.5 1.5 0 0 1 3 5.5V1H1.5a.5.5 0 0 0-.5.5m3 4a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V1H4zM3 15h10v-4.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5z"/>
+                </svg>
+                Save
+              </button>
+            </div>
+          </div>
+          <div id="git-integration-config-response" class="mt-2"></div>
         </form>
       </div>
     </div>
