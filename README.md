@@ -15,6 +15,14 @@ A personal project to easily navigate a kubeseal sealed secret
 ## Installation
 
 ```
+clone repository:
+git@source.everywhere.id:backend/go-kubeseal-gui.git
+
+run app:
+make run
+
+fill in the configuration
+open in browser http://localhost:16000/config
 ```
 
 ## Configuration
