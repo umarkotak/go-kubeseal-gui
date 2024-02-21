@@ -71,6 +71,50 @@ func (h *handlers) RemoveClustersConfig(w http.ResponseWriter, r *http.Request) 
 	})
 }
 
+func (h *handlers) ClusterSyncSecrets(w http.ResponseWriter, r *http.Request) {
+	alias := r.PathValue("alias")
+	clusterConf := config.Get().ClusterMap[alias]
+	clusterName := clusterConf.Name
+
+	if clusterName == "" {
+		successTmpl.ExecuteTemplate(w, "failure", map[string]interface{}{
+			"Message": "fail get cluster!",
+		})
+		return
+	}
+
+	err := kubectl.UseContext(r.Context(), clusterName)
+	if err != nil {
+		failureTmpl.ExecuteTemplate(w, "notification", map[string]interface{}{
+			"Error":   err.Error(),
+			"Message": "kubectl get context error",
+		})
+		return
+	}
+
+	allSecrets, err := kubectl.GetSecretsName(r.Context())
+	if err != nil {
+		failureTmpl.ExecuteTemplate(w, "notification", map[string]interface{}{
+			"Error":   err.Error(),
+			"Message": "kubectl get secrets error",
+		})
+		return
+	}
+
+	clusterConf.AllSecrets = allSecrets
+
+	err = config.SetCluster(clusterConf)
+	if err != nil {
+		failureTmpl.ExecuteTemplate(w, "notification", map[string]interface{}{
+			"Error":   err.Error(),
+			"Message": "save cluster config error",
+		})
+		return
+	}
+
+	w.Header().Add("HX-Refresh", "true")
+}
+
 func (h *handlers) ClusterEnableSecrets(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	secrets := r.Form["secrets"]

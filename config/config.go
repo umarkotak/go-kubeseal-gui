@@ -63,7 +63,7 @@ func Load() error {
 // Set config variable to file
 func SetCluster(c Cluster) error {
 	for _, oneCluster := range config.ClusterMap {
-		if oneCluster.Name == c.Name {
+		if oneCluster.Name == c.Name && oneCluster.Alias != c.Alias {
 			err := fmt.Errorf("cluster already exists")
 			return err
 		}

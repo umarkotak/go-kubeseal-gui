@@ -33,6 +33,7 @@ func main() {
 	mux.HandleFunc("GET /api/config", ah.GetConfig)
 	mux.HandleFunc("POST /api/config/clusters/add", ah.AddClustersConfig)
 	mux.HandleFunc("POST /api/config/clusters/{alias}/delete", ah.RemoveClustersConfig)
+	mux.HandleFunc("POST /api/config/clusters/{alias}/sync_secrets", ah.ClusterSyncSecrets)
 	mux.HandleFunc("POST /api/config/clusters/{alias}/enable_secrets", ah.ClusterEnableSecrets)
 	mux.HandleFunc("POST /api/config/controller", ah.SetupConfigController)
 	mux.HandleFunc("POST /api/config/git_integration", ah.SetupGitIntegration)
