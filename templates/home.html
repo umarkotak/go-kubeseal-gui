@@ -311,6 +311,7 @@
 
     function ace_set_default(ace_editor) {
       ace_editor.setOptions({
+        autoScrollEditorIntoView: true,
         maxLines: Infinity
       })
       ace_editor.getSession().setMode("ace/mode/yaml")
@@ -325,6 +326,18 @@ metadata:
 data:
   KEY_1: VALUE_1
   KEY_2: VALUE_2`, -1)
+      // ace_editor.commands.addCommand({
+      //   name: "unfind",
+      //   bindKey: {
+      //     win: "Ctrl-F",
+      //     mac: "Command-F"
+      //   },
+      //   exec: function(editor, line) {
+      //     return false
+      //   },
+      //   readOnly: false,
+      //   scrollIntoView: "cursor"
+      // })
     }
 
     $('input[name="active_tab"]').on('click change', function(e) {
