@@ -1,10 +1,11 @@
 # Go Kubeseal GUI
 
-A personal project to easily navigate a kubeseal sealed secret
+A kubeseal web gui fully written in golang.
 
 ## Features
 1. Read existing sealed secret
 2. Seal a new/modified secret
+3. Auto push sealed secret to git repository
 
 ## Pre requisites
 1. kubectl
