@@ -7,6 +7,7 @@ import (
 	"github.com/umarkotak/go-kubeseal-gui/api_handlers"
 	"github.com/umarkotak/go-kubeseal-gui/config"
 	"github.com/umarkotak/go-kubeseal-gui/page_handlers"
+	"github.com/umarkotak/go-kubeseal-gui/utils/log_formatter"
 
 	_ "github.com/go-git/go-billy/v5"
 	_ "github.com/go-git/go-billy/v5/memfs"
@@ -16,6 +17,7 @@ import (
 
 func main() {
 	logrus.SetReportCaller(true)
+	logrus.SetFormatter(&log_formatter.Formatter{})
 
 	config.Load()
 
@@ -43,6 +45,7 @@ func main() {
 	mux.HandleFunc("POST /api/kubectl/{alias_name}/secret/seal", ah.KubectlSeal)
 	mux.HandleFunc("POST /api/kubectl/{alias_name}/secret/compare_diff", ah.KubectlSecretDiff)
 	mux.HandleFunc("POST /api/kubectl/{alias_name}/secret/seal_and_push", ah.KubectlSealAndPush)
+	mux.HandleFunc("POST /api/kubectl/{alias_name}/secret/seal_and_pr", ah.KubectlSealAndPr)
 
 	// Page handler
 	mux.HandleFunc("GET /home", ph.Home)

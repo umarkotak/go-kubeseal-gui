@@ -12,6 +12,9 @@
     integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"
     crossorigin="anonymous"
   ></script>
+  <script
+    src="https://unpkg.com/htmx.org@1.9.11/dist/ext/loading-states.js"
+  ></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link
     href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css"
@@ -38,6 +41,9 @@
     }
     .f-sohne {
       font-family: sohne, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    [data-loading] {
+      display: none;
     }
   </style>
 </head>

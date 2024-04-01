@@ -5,6 +5,7 @@ import (
 
 	"github.com/umarkotak/go-kubeseal-gui/config"
 	"github.com/umarkotak/go-kubeseal-gui/kubectl"
+	"github.com/umarkotak/go-kubeseal-gui/utils"
 	"github.com/umarkotak/go-kubeseal-gui/utils/render"
 )
 
@@ -157,6 +158,9 @@ func (h *handlers) SetupGitIntegration(w http.ResponseWriter, r *http.Request) {
 		TmpFolderPath:     r.FormValue("git_conf_tmp_folder_path"),
 		RepoUrl:           r.FormValue("git_conf_repo_url"),
 		RepoHttpUrl:       r.FormValue("git_conf_repo_http_url"),
+		GitlabBaseUrl:     r.FormValue("git_conf_gitlab_base_url"),
+		RepoEnvProjectID:  utils.StrMustInt(r.FormValue("git_conf_gitlab_repo_env_project_id")),
+		MasterBranchName:  r.FormValue("git_conf_gitlab_master_branch_name"),
 	})
 	if err != nil {
 		failureTmpl.ExecuteTemplate(w, "notification", map[string]interface{}{

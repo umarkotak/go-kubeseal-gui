@@ -24,12 +24,17 @@ type (
 	}
 
 	GitConf struct {
-		GitProvider       string `json:"git_provider"`        // Enum: gitlab
+		GitProvider string `json:"git_provider"` // Enum: gitlab
+
 		GitlabAccessToken string `json:"gitlab_access_token"` // gitlab access token: https://your-gitlab-host/-/profile/personal_access_tokens
-		PrivateKeyPath    string `json:"private_key_path"`    // used to push git changes to repository
-		TmpFolderPath     string `json:"tmp_folder_path"`     // temporary path to store the clonned repository
-		RepoUrl           string `json:"repo_url"`            // repo in which will be pushed the env
-		RepoHttpUrl       string `json:"repo_http_url"`
+		GitlabBaseUrl     string `json:"gitlab_base_url"`     //
+		RepoEnvProjectID  int    `json:"repo_env_project_id"` //
+		MasterBranchName  string `json:"master_branch_name"`  //
+
+		PrivateKeyPath string `json:"private_key_path"` // used to push git changes to repository
+		TmpFolderPath  string `json:"tmp_folder_path"`  // temporary path to store the clonned repository
+		RepoUrl        string `json:"repo_url"`         // repo in which will be pushed the env
+		RepoHttpUrl    string `json:"repo_http_url"`
 	}
 
 	Secret struct {

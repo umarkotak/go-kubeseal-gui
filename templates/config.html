@@ -192,6 +192,39 @@
                 value="{{ .GitConf.GitlabAccessToken }}"
               />
             </div>
+            <div class="mb-2">Gitlab Base URL</div>
+            <div class="mb-3">
+              <input
+                type="text"
+                id="git_conf_gitlab_base_url"
+                name="git_conf_gitlab_base_url"
+                class="w-full p-2 border rounded-lg h-10"
+                placeholder="https://source.everywhere.id"
+                value="{{ .GitConf.GitlabBaseUrl }}"
+              />
+            </div>
+            <div class="mb-2">Gitlab Master Branch Name</div>
+            <div class="mb-3">
+              <input
+                type="text"
+                id="git_conf_gitlab_master_branch_name"
+                name="git_conf_gitlab_master_branch_name"
+                class="w-full p-2 border rounded-lg h-10"
+                placeholder="master"
+                value="{{ .GitConf.MasterBranchName }}"
+              />
+            </div>
+            <div class="mb-2">Repo ENV Project ID</div>
+            <div class="mb-3">
+              <input
+                type="text"
+                id="git_conf_gitlab_repo_env_project_id"
+                name="git_conf_gitlab_repo_env_project_id"
+                class="w-full p-2 border rounded-lg h-10"
+                placeholder="master"
+                value="{{ .GitConf.RepoEnvProjectID }}"
+              />
+            </div>
             <div class="mb-2">Private Key Path</div>
             <div class="mb-3">
               <input

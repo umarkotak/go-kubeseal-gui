@@ -32,7 +32,13 @@ type (
 	PushResponse struct {
 		GitUrl           string `json:"git_url"`
 		BranchUrl        string `json:"branch_url"`
+		BranchName       string `json:"branch_name"`
 		MergeRequestUrl  string `json:"merge_request_url"`
+		SecretSealedYaml string `json:"secret_sealed_yaml"`
+	}
+
+	PRResponse struct {
+		MrUrl            string `json:"mr_url"`
 		SecretSealedYaml string `json:"secret_sealed_yaml"`
 	}
 )
@@ -301,9 +307,10 @@ func (h *handlers) PushToGit(
 	}
 
 	return PushResponse{
-		GitUrl:           fmt.Sprintf("%s", config.Get().GitConf.RepoHttpUrl),
+		GitUrl:           config.Get().GitConf.RepoHttpUrl,
+		BranchName:       branchName,
 		BranchUrl:        fmt.Sprintf("%s/-/tree/%s", config.Get().GitConf.RepoHttpUrl, branchName),
-		MergeRequestUrl:  fmt.Sprintf(""),
+		MergeRequestUrl:  "",
 		SecretSealedYaml: string(secretSealedYaml),
 	}, nil
 }
