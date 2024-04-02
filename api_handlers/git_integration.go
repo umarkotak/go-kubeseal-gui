@@ -203,9 +203,10 @@ func (h *handlers) KubectlSealAndPr(w http.ResponseWriter, r *http.Request) {
 	}
 
 	mrParams := &gitlab.CreateMergeRequestOptions{
-		SourceBranch: gitlab.Ptr(pushResponse.BranchName),
-		TargetBranch: gitlab.Ptr(masterBranchName),
-		Title:        gitlab.Ptr(fmt.Sprintf("merge request from %s to master", pushResponse.BranchName)),
+		SourceBranch:       gitlab.Ptr(pushResponse.BranchName),
+		TargetBranch:       gitlab.Ptr(masterBranchName),
+		Title:              gitlab.Ptr(fmt.Sprintf("merge request from %s to master", pushResponse.BranchName)),
+		RemoveSourceBranch: gitlab.Ptr(true),
 	}
 
 	mr, _, err := gitlabClient.MergeRequests.CreateMergeRequest(config.Get().GitConf.RepoEnvProjectID, mrParams)
