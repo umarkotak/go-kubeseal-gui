@@ -159,6 +159,9 @@
             Seal & Push
           </button>
         </div>
+        <div id="seal_and_push_loading" class="hidden">
+          <progress class="progress w-full"></progress>
+        </div>
         <div id="seal_and_push_result"></div>
       </div>
     </div>
@@ -277,11 +280,13 @@
       })
 
       try {
+        toggleSealAndPush(true)
         const response = await fetch(`/api/kubectl/${$('#cluster-select').val()}/secret/seal_and_push`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: bodyData,
         })
+        toggleSealAndPush(false)
 
         if (!response.ok) {
           const data = await response.text()
@@ -303,6 +308,7 @@
         // }
 
       } catch (error) {
+        toggleSealAndPush(false)
         alert(`ERROR: ${error.message}`)
       }
     }
@@ -316,11 +322,13 @@
       })
 
       try {
+        toggleSealAndPush(true)
         const response = await fetch(`/api/kubectl/${$('#cluster-select').val()}/secret/seal_and_pr`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: bodyData,
         })
+        toggleSealAndPush(false)
 
         if (!response.ok) {
           const data = await response.text()
@@ -342,7 +350,16 @@
         // }
 
       } catch (error) {
+        toggleSealAndPush(false)
         alert(`ERROR: ${error.message}`)
+      }
+    }
+
+    function toggleSealAndPush(bool) {
+      if (bool) {
+        $('#seal_and_push_loading').removeClass("hidden")
+      } else {
+        $('#seal_and_push_loading').addClass("hidden")
       }
     }
   </script>
